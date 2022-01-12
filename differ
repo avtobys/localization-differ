@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+
+print_usage() {
+    echo "Usage: ./differ /path/ru_file.php /path/en_file.php"
+}
+
+if [[ "$1" == "--help" || -z "$1" || -z "$2" ]]; then
+    print_usage
+    exit 0
+fi
+
+if [ ! -f "$1" ]; then
+    echo "File $1 not exists"
+    print_usage
+    exit 0
+fi
+
+if [ ! -f "$2" ]; then
+    echo "File $2 not exists"
+    print_usage
+    exit 0
+fi
+
+RU_FILE=$1
+EN_FILE=$2
+
+echo "RU file: $RU_FILE"
+echo "EN file: $EN_FILE"
+echo "----------------------------------------------------------------"
+
+while IFS= read -r line; do
+    ru_line=$(echo $line | grep '[А-я]')
+    if [[ -n "${ru_line}" ]]; then
+        echo "RU STRING: $ru_line"
+        prev_str=$(echo $ru_line | sed -E 's/^([^А-я]+)([А-я]+.*)/\1/g' | sed -r 's/([\$\*\/\[\\\])/\\\1/g')
+        en_line=$(cat $EN_FILE | grep "${prev_str}")
+        printf "\n"
+        echo "EN STRING: $en_line"
+        echo "--------------------"
+        printf "\n"
+    fi
+done <$RU_FILE
+
