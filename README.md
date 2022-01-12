@@ -1,4 +1,4 @@
-# Helper localization files from project RU to EN
+# Localization helper from files project RU to EN
 
 Usage: ./differ /path/ru_file.php /path/en_file.php
 
